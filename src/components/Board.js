@@ -26,13 +26,14 @@ export default class Board extends Component {
     onSquareClicked =(i) =>{
         let squaresList =this.props.squares.slice();
         squaresList[i]= this.props.nextPlayer?"O":"X"
-        this.props.setParentsState({squares:squaresList,nextPlayer:!this.props.nextPlayer})
+        this.props.setParentsState({squares:squaresList,nextPlayer:!this.props.nextPlayer,history:[...this.props.history,{squares:squaresList,nextPlayer:!this.props.nextPlayer}]})
     }
     render() {
         let status='';
         const winner = calculateWinner(this.props.squares)
         
         if (winner) {
+            this.props.postData()
             status = "Winner: " + winner;
         } else {
             status = "Next player: " + (this.props.nextPlayer ? "X" : "O");
