@@ -9,9 +9,14 @@ export default class App extends Component {
     this.state={
       squares:['','','','','','','','',''],
       nextPlayer: false,
-      history:[],
-      user: ''
+      history: [
+        { squares: Array(9).fill(null) }
+      ],
+      stepNumber: 0,
+      user: '',
+      topRank : []
       }
+     
     }
 
   setParentsState = (obj) => {
@@ -26,10 +31,10 @@ export default class App extends Component {
     this.setState({user:response.name})
   }
 
-  postData = async() =>{
+  postData = async(duration) =>{
     let data = new URLSearchParams();
     data.append("player", this.state.user);
-    data.append("score", 3);
+    data.append("score", duration);
     const url = `http://ftw-highscores.herokuapp.com/tictactoe-dev`;
     const response = await fetch(url, {
     method: "POST",
@@ -46,6 +51,7 @@ export default class App extends Component {
     const url = `http://ftw-highscores.herokuapp.com/tictactoe-dev`;
     let result = await fetch(url);
     let data = await result.json();
+    this.setState({topRank:data.items});
   }
 
   render() {
@@ -74,6 +80,13 @@ export default class App extends Component {
         })
       }
       </ul>
+      <h2>Leader Board:</h2>
+      <ol>
+      {
+        this.state.topRank.map((item)=>{
+          return (<li>{item.player}:{item.score}</li>)
+        })
+      }</ol>
       </div>
       </div>
     )

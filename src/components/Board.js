@@ -2,6 +2,9 @@ import React, { Component } from 'react'
 import Square from './Square'
 import '../App.css';
 
+let startTime =0;
+let gameOver = false;
+
 const calculateWinner = (squares) => {
     const lines = [
       [0, 1, 2],
@@ -23,21 +26,29 @@ const calculateWinner = (squares) => {
   };
 
 export default class Board extends Component {
-    onSquareClicked =(i) =>{
+    onSquareClicked = (i) =>{
+        if (startTime === 0){
+        startTime = Date.now();
+        }
         let squaresList =this.props.squares.slice();
         squaresList[i]= this.props.nextPlayer?"O":"X"
         this.props.setParentsState({squares:squaresList,nextPlayer:!this.props.nextPlayer,history:[...this.props.history,{squares:squaresList,nextPlayer:!this.props.nextPlayer}]})
     }
     render() {
         let status='';
-        const winner = calculateWinner(this.props.squares)
-        
-        if (winner) {
-            this.props.postData()
-            status = "Winner: " + winner;
+        if(gameOver){
+            status = 'Match Over'
         } else {
-            status = "Next player: " + (this.props.nextPlayer ? "X" : "O");
+            const winner = calculateWinner(this.props.squares)
+        if(winner){
+            let duration = Date.now() - startTime;
+            this.props.postData(duration)
+            status = `Winner is ${winner}`
+            gameOver = true;
+        } else {
+            status = "Next player: " + (this.props.nextPlayer ? "O" : "X");
         }
+    }
 
         return (
             <div>
